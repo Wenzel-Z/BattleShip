@@ -17,14 +17,14 @@ public class FleetController extends AbstractController{
     @Override
     public void run() {
         this.fleetDisplay.setMaxSize(this.model.getMaxSize());
-        boolean invalidInput = true;
-        while (invalidInput) {
+        boolean obtainedInput = false;
+        while (!(obtainedInput)) {
             this.fleetDisplay.display();
             try {
                 String line = this.scanner.nextLine();
                 int[] shipSizes = Arrays.stream(line.split(" ")).mapToInt(Integer::parseInt).toArray();
-                this.model.setShipSizes(shipSizes);
-                invalidInput = false;
+                this.model.setAmountOfShips(shipSizes);
+                obtainedInput = true;
             } catch (NoSuchElementException e) {
                 this.fleetDisplay.handleError(e);
             } catch (IllegalArgumentException e) {

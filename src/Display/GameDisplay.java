@@ -29,15 +29,15 @@ public class GameDisplay implements Display {
         System.out.println("---------------------------------------------");
     }
 
-    public void handleError(NoSuchElementException e) {
+    public void handleError(NoSuchElementException ignored) {
         System.err.println("Please enter 8 values");
     }
 
-    public void handleError(IllegalArgumentException e) {
+    public void handleError(IllegalArgumentException ignored) {
         System.err.println("Arguments not formatted correctly, please include a space between each pair of coordinates");
     }
 
-    public void handleError(ArrayIndexOutOfBoundsException e) {
+    public void handleError(ArrayIndexOutOfBoundsException ignored) {
         System.err.println("The indices given are not valid as they are out of bounds");
     }
 }

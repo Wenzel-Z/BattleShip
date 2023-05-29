@@ -32,26 +32,22 @@ public class GameController extends AbstractController {
 
     @Override
     public void run() {
-        // TODO add separation for player and AIs
+        // TODO add separation for player and AIs -> clean
         this.ai.setDimensions(this.getWidth(), this.getHeight());
         this.playerAI.setDimensions(this.getWidth(), this.getHeight());
         int shots = 0;
         Status statusOfGame = Status.ONGOING;
         ArrayList<Coordinate> aiShotCoordinates;
-        ArrayList<Coordinate> aiPlayerShotCoordinates;
+        ArrayList<Coordinate> aiPlayerShotCoordinates = new ArrayList<>();
         while (statusOfGame == Status.ONGOING) {
-            gameDisplay.displayOpponentBoard();
-            gameDisplay.displayBoard(this.getOpponentBoard());
-            gameDisplay.displayYourBoard();
-            gameDisplay.displayBoard(this.getBoard());
-            gameDisplay.display();
-            gameDisplay.printLine();
+            this.printMessage();
             if (!(this.twoAI)) {
                 while (shots < 8) {
                     try {
                         String shot = this.scanner.nextLine();
                         int[] coordinates = Arrays.stream(shot.split(" ")).mapToInt(Integer::parseInt).toArray();
-                        this.model.addCoordinate(coordinates);
+                        Coordinate coordinate = new Coordinate(coordinates[0], coordinates[1]);
+                        aiPlayerShotCoordinates.add(coordinate);
 
                         shots++;
                     } catch (NoSuchElementException e) {
@@ -63,11 +59,13 @@ public class GameController extends AbstractController {
                     }
                 }
             } else {
-                // Player AI shots
+                // Model.Player AI shots
                 aiPlayerShotCoordinates = this.playerAI.takeRandomShots();
-                this.model.takeShots(aiPlayerShotCoordinates, true);
-                aiPlayerShotCoordinates.clear();
             }
+
+            // Model.Player/AI shots
+            this.model.takeShots(aiPlayerShotCoordinates, true);
+            aiPlayerShotCoordinates.clear();
 
             // AI shots
             aiShotCoordinates = this.ai.takeRandomShots();
@@ -82,17 +80,26 @@ public class GameController extends AbstractController {
         }
     }
 
-    private State[][] getOpponentBoard() { return this.model.getOpponentSalvoBoard().getBoard(); }
-
     private State[][] getBoard() { return this.model.getSalvoBoard().getBoard(); }
 
-    private State[][] getOpponentHitBoard() { return this.model.getOpponentSalvoBoard().getHitBoard(); }
+    private State[][] getOpponentBoard() { return this.model.getOpponentSalvoBoard().getBoard(); }
 
     private State[][] getHitBoard() { return this.model.getSalvoBoard().getHitBoard(); }
+
+    private State[][] getOpponentHitBoard() { return this.model.getOpponentSalvoBoard().getHitBoard(); }
 
     private int getWidth() { return this.model.getSalvoBoard().getWidth(); }
 
     private int getHeight() { return this.model.getSalvoBoard().getHeight(); }
+
+    private void printMessage() {
+        gameDisplay.displayOpponentBoard();
+        gameDisplay.displayBoard(this.getOpponentHitBoard());
+        gameDisplay.displayYourBoard();
+        gameDisplay.displayBoard(this.getBoard());
+        gameDisplay.display();
+        gameDisplay.printLine();
+    }
 
     private void setTwoAI() {
         if (this.twoAI) {

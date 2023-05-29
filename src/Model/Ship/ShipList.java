@@ -1,4 +1,4 @@
-package Model;
+package Model.Ship;
 
 import DataClasses.Coordinate;
 
@@ -39,7 +39,6 @@ public class ShipList {
     }
 
     public boolean checkStatus() {
-        int liveShips = 0;
         for (Ship ship: this.ships) {
             if (ship.isAlive()) {
                 return true;

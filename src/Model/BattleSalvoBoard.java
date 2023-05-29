@@ -3,7 +3,11 @@ package Model;
 import DataClasses.Coordinate;
 import DataClasses.State;
 import DataClasses.ShipType;
+import Exceptions.GenerationException;
+import Model.Ship.Ship;
+import Model.Ship.ShipList;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -15,11 +19,13 @@ public class BattleSalvoBoard {
     private final int height;
     private final int width;
 
-    public BattleSalvoBoard(int height, int width, int[] shipSizes) {
+    public BattleSalvoBoard(int height, int width, int[] amounts) {
         this.height = height;
         this.width = width;
-        this.ships = this.createShipList(shipSizes);
+
+        this.ships = this.createShipList(amounts);
         this.shipLocations = new HashSet<>();
+
         this.board = this.createBoard();
         State[][] hitBoard = new State[width][height];
         this.hitBoard = this.fillBoard(hitBoard);
@@ -34,7 +40,7 @@ public class BattleSalvoBoard {
     }
 
     public ShipList getShips() {
-        return ships;
+        return this.ships;
     }
 
     public int getHeight() { return height; }
@@ -60,66 +66,68 @@ public class BattleSalvoBoard {
 
 
     private State[][] createBoard() {
-        //TODO make cleaner and separate logic out
         Random random = new Random();
         State[][] board = new State[this.width][this.height];
         Ship[] ships = this.ships.getShips();
+        int amountOfShips = this.ships.getSize();
 
         int shipsPlaced = 0;
-        while (shipsPlaced < this.ships.getSize()) {
+        while (shipsPlaced < amountOfShips) {
             Ship ship = ships[shipsPlaced];
-            int size = ship.getSize();
+            int size = ship.getRep().getSize();
+            try {
+                int x = random.nextInt(this.width);
+                int y = random.nextInt(this.height);
+                boolean vertical = random.nextBoolean();
 
-            int x = random.nextInt(this.width);
-            int y = random.nextInt(this.height);
-            boolean vertical = random.nextBoolean();
-
-            if (vertical) {
-                while (y + size > this.height) {
-                    y -= 1;
-                }
-            } else {
-                while (x + size> this.width) {
-                    x -= 1;
-                }
+                this.placeShip(board, ship, size, x, y, vertical);
+                shipsPlaced++;
+            } catch (GenerationException ignored) {
             }
-
-            boolean isFree = true;
-            if (vertical) {
-                for (int m = y; m < (y + size); m++) {
-                    if (board[x][m] == State.SHIP) {
-                        isFree = false;
-                        break;
-                    }
-                }
-            } else {
-                for (int n = x; n < (x + size); n++) {
-                    if (board[n][y] == State.SHIP) {
-                        isFree = false;
-                        break;
-                    }
-                }
-            }
-
-            if (!isFree) {
-                continue;
-            }
-
-            for (int j = 0; j < size; j++) {
-                board[x][y] = State.SHIP;
-                Coordinate coordinate = new Coordinate(x, y);
-                ship.addCoordinates(coordinate);
-                shipLocations.add(coordinate);
-                if (vertical) {
-                    y++;
-                } else {
-                    x++;
-                }
-            }
-            shipsPlaced++;
         }
 
         return fillBoard(board);
+    }
+
+    private void placeShip(State[][] board, Ship ship, int size, int x, int y, boolean vertical)
+            throws GenerationException {
+
+        // Not the biggest fan of this function, definitely a way to not have so much repeat code
+        if (vertical) {
+            while (y + size > this.height) {
+                y -= 1;
+            }
+        } else {
+            while (x + size> this.width) {
+                x -= 1;
+            }
+        }
+
+        if (vertical) {
+            for (int m = y; m < (y + size); m++) {
+                if (board[x][m] == State.SHIP) {
+                    throw new GenerationException();
+                }
+            }
+        } else {
+            for (int n = x; n < (x + size); n++) {
+                if (board[n][y] == State.SHIP) {
+                    throw new GenerationException();
+                }
+            }
+        }
+
+        for (int j = 0; j < size; j++) {
+            board[x][y] = State.SHIP;
+            Coordinate coordinate = new Coordinate(x, y);
+            ship.addCoordinates(coordinate);
+            this.shipLocations.add(coordinate);
+            if (vertical) {
+                y++;
+            } else {
+                x++;
+            }
+        }
     }
 
     private State[][] fillBoard(State[][] board) {
@@ -133,12 +141,21 @@ public class BattleSalvoBoard {
         return board;
     }
 
-    private ShipList createShipList(int[] sizes) {
+    private ShipList createShipList(int[] amounts) {
         ShipType[] representatives = new ShipType[] {ShipType.CARRIER, ShipType.BATTLESHIP,
                                                     ShipType.DESTROYER, ShipType.SUBMARINE};
-        Ship[] ships = new Ship[4];
-        for (int i = 0; i < sizes.length; i++) {
-            ships[i] = new Ship(representatives[i], sizes[i]);
+        int index = 0;
+        int numShips = Arrays.stream(amounts).sum();
+        Ship[] ships = new Ship[numShips];
+        int i = 0;
+        while (i < numShips){
+            int j = 0;
+            while(j < amounts[index]) {
+                ships[i] = new Ship(representatives[index]);
+                i++;
+                j++;
+            }
+            index++;
         }
 
         return new ShipList(ships);

@@ -15,14 +15,10 @@ public enum State {
     },
     SHIP {
         @Override
-        public String toString() {
-            return "S";
-        }
+        public String toString() { return "S"; }
     },
     WATER {
         @Override
-        public String toString() {
-            return ".";
-        }
+        public String toString() { return "."; }
     }
 }
