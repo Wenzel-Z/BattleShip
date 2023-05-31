@@ -5,6 +5,7 @@ import DataClasses.ShipType;
 
 import java.util.HashSet;
 
+
 public class Ship {
     private final ShipType representation;
 

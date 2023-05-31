@@ -41,6 +41,9 @@ public class GameController extends AbstractController {
         ArrayList<Coordinate> aiPlayerShotCoordinates = new ArrayList<>();
         while (statusOfGame == Status.ONGOING) {
             this.printMessage();
+            if (this.twoAI) {
+                this.scanner.nextLine();
+            }
             if (!(this.twoAI)) {
                 while (shots < 8) {
                     try {
@@ -60,7 +63,7 @@ public class GameController extends AbstractController {
                 }
             } else {
                 // Model.Player AI shots
-                aiPlayerShotCoordinates = this.playerAI.takeRandomShots();
+                aiPlayerShotCoordinates = this.playerAI.takeRandomShots(this.getLiveShips(true));
             }
 
             // Model.Player/AI shots
@@ -68,15 +71,20 @@ public class GameController extends AbstractController {
             aiPlayerShotCoordinates.clear();
 
             // AI shots
-            aiShotCoordinates = this.ai.takeRandomShots();
+            aiShotCoordinates = this.ai.takeRandomShots(this.getLiveShips(false));
             this.model.takeShots(aiShotCoordinates, false);
             aiShotCoordinates.clear();
 
             statusOfGame = this.model.checkStatusOfGame();
+        }
+    }
 
-            if (this.twoAI) {
-                this.scanner.nextLine();
-            }
+
+    private int getLiveShips(boolean player) {
+        if (player) {
+            return this.model.getSalvoBoard().getShips().getLiveShips();
+        } else {
+            return this.model.getOpponentSalvoBoard().getShips().getLiveShips();
         }
     }
 

@@ -14,7 +14,7 @@ public class BattleSalvoAI {
     int area;
 
     public BattleSalvoAI() {
-        this.random = new Random();;
+        this.random = new Random();
         this.hitSquares = new HashSet<>();
     }
 
@@ -24,17 +24,16 @@ public class BattleSalvoAI {
         this.area = boardWidth * boardHeight;
     }
 
-    public ArrayList<Coordinate> takeRandomShots() {
+    public ArrayList<Coordinate> takeRandomShots(int shipsLeft) {
         int shotsTaken = 0;
         int difference = this.area - this.hitSquares.size();
-        if (difference < 8) {
+        if (difference < shipsLeft) {
             shotsTaken = difference;
         }
 
         ArrayList<Coordinate> coordinates = new ArrayList<>();
-        while (shotsTaken < 8) {
+        while (shotsTaken < shipsLeft) {
             Coordinate coordinate = new Coordinate(random.nextInt(this.boardWidth), random.nextInt(this.boardHeight));
-            // TODO fix random generation
             if (!(this.hitSquares.contains(coordinate))) {
                 coordinates.add(coordinate);
                 this.hitSquares.add(coordinate);

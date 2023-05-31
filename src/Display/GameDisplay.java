@@ -9,7 +9,7 @@ public class GameDisplay implements Display {
 
     @Override
     public void display() {
-        System.out.println("Please Enter 8 Shots");
+        System.out.println("Please enter your shots");
     }
 
     public void displayOpponentBoard() {

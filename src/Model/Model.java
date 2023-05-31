@@ -45,7 +45,6 @@ public class Model {
     }
 
     public void takeShots(ArrayList<Coordinate> coordinates, boolean player) {
-        // For AI to hit the board
         for (Coordinate shot : coordinates) {
             if (player) {
                 this.opponentBattleSalvoBoard.takeShot(shot);
