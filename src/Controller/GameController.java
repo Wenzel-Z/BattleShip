@@ -12,14 +12,24 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+
+/**
+ * Controller that handles the running of the game
+ */
 public class GameController extends AbstractController {
     private final GameDisplay gameDisplay;
     private BattleSalvoAI playerAI;
-
     private final BattleSalvoAI ai;
-
     private final boolean twoAI;
 
+    /**
+     * Constructor for game controller, takes in the scanner and model for the superclass
+     * Creates game display for output and ai for playing the game
+     *
+     * @param scanner   scanner of system input stream, passed to every controller
+     * @param model     model used to handle the logic obtained from the user
+     * @param twoAI     boolean for whether player vs ai or ai vs ai
+     */
     public GameController(Scanner scanner, Model model, boolean twoAI) {
         super(scanner, model);
 
@@ -30,6 +40,9 @@ public class GameController extends AbstractController {
         this.setTwoAI();
     }
 
+    /**
+     * Runs the game and continues running till one side loses
+     */
     @Override
     public void run() {
         // TODO add separation for player and AIs -> clean
@@ -45,7 +58,7 @@ public class GameController extends AbstractController {
                 this.scanner.nextLine();
             }
             if (!(this.twoAI)) {
-                while (shots < 8) {
+                while (shots < this.getLiveShips(true)) {
                     try {
                         String shot = this.scanner.nextLine();
                         int[] coordinates = Arrays.stream(shot.split(" ")).mapToInt(Integer::parseInt).toArray();
@@ -79,7 +92,12 @@ public class GameController extends AbstractController {
         }
     }
 
-
+    /**
+     * Gets the live ships currently alive for the player
+     *
+     * @param player       boolean of whether it is the player's or opponent's side
+     * @return             the amount of live ships
+     */
     private int getLiveShips(boolean player) {
         if (player) {
             return this.model.getSalvoBoard().getShips().getLiveShips();
@@ -88,27 +106,63 @@ public class GameController extends AbstractController {
         }
     }
 
+    /**
+     * Gets the players board
+     *
+     * @return      the player's board
+     */
     private State[][] getBoard() { return this.model.getSalvoBoard().getBoard(); }
 
+    /**
+     * Gets the opponents board
+     *
+     * @return      the opponent's board
+     */
     private State[][] getOpponentBoard() { return this.model.getOpponentSalvoBoard().getBoard(); }
 
+    /**
+     * Gets the player's hidden board
+     *
+     * @return      the player's hidden board
+     */
     private State[][] getHitBoard() { return this.model.getSalvoBoard().getHitBoard(); }
 
+    /**
+     * Gets the opponent's hidden board
+     *
+     * @return      the opponent's hidden board
+     */
     private State[][] getOpponentHitBoard() { return this.model.getOpponentSalvoBoard().getHitBoard(); }
 
-    private int getWidth() { return this.model.getSalvoBoard().getWidth(); }
+    /**
+     * Gets the width of the boards
+     *
+     * @return      the width of the boards
+     */
+    private int getWidth() { return this.model.getWidth(); }
 
-    private int getHeight() { return this.model.getSalvoBoard().getHeight(); }
+    /**
+     * Gets the height of the boards
+     *
+     * @return      the height of the boards
+     */
+    private int getHeight() { return this.model.getHeight(); }
 
+    /**
+     * Helper method, uses game display to print the next screen
+     *
+     */
     private void printMessage() {
-        gameDisplay.displayOpponentBoard();
-        gameDisplay.displayBoard(this.getOpponentHitBoard());
-        gameDisplay.displayYourBoard();
-        gameDisplay.displayBoard(this.getBoard());
-        gameDisplay.display();
-        gameDisplay.printLine();
+        this.gameDisplay.displayBoard(this.getOpponentHitBoard(), false);
+        this.gameDisplay.displayBoard(this.getBoard(), true);
+        this.gameDisplay.display();
+        this.gameDisplay.printLine();
     }
 
+    /**
+     * Sets an ai if player is null - bad method because of lack of "player class"s
+     *
+     */
     private void setTwoAI() {
         if (this.twoAI) {
             this.playerAI = new BattleSalvoAI();

@@ -5,7 +5,9 @@ import DataClasses.ShipType;
 
 import java.util.HashSet;
 
-
+/**
+ * Class for a ship object, keeps track of its location and times it has been hit
+ */
 public class Ship {
     private final ShipType representation;
 
@@ -15,6 +17,11 @@ public class Ship {
 
     private boolean alive;
 
+    /**
+     * Constructor for ship
+     *
+     * @param representation    Type of ship the ship should be
+     */
     public Ship(ShipType representation) {
         this.representation = representation;
         this.location = new HashSet<>();
@@ -22,18 +29,36 @@ public class Ship {
         this.alive = true;
     }
 
+    /**
+     * Getter for the type of ship
+     *
+     * @return      type of ship
+     */
     public ShipType getRep() {
         return this.representation;
     }
 
+    /**
+     * Getter for checking whether the ship is alive or destroyed
+     *
+     * @return  true if alive, false if dead
+     */
     public boolean isAlive() {
-        return alive;
+        return this.alive;
     }
 
+    /**
+     * Gets the board cells the ship occupies
+     *
+     * @return      location of the ship
+     */
     public HashSet<Coordinate> getLocation() {
-        return location;
+        return this.location;
     }
 
+    /**
+     * Increments the amount of damage the ship has taken
+     */
     public void handleHit() {
         this.hitsTaken++;
         if (this.hitsTaken == this.representation.getSize()) {
@@ -41,6 +66,11 @@ public class Ship {
         }
     }
 
+    /**
+     * Sets the coordinates the ship is at
+     *
+     * @param coordinate    coordinate of the ship
+     */
     public void addCoordinates(Coordinate coordinate) {
         this.location.add(coordinate);
     }

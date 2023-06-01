@@ -11,6 +11,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
+/**
+ * Class for representing a board in the Battle Salvo Game
+ */
 public class BattleSalvoBoard {
     private final State[][] board;
     private final State[][] hitBoard;
@@ -19,6 +22,13 @@ public class BattleSalvoBoard {
     private final int height;
     private final int width;
 
+    /**
+     * Constructor for the board, creates a board and places the ships
+     *
+     * @param height    height of board
+     * @param width     width of board
+     * @param amounts   amount of each ship type in the order <Carrier, Battleship, Destroyer, Sub>
+     */
     public BattleSalvoBoard(int height, int width, int[] amounts) {
         this.height = height;
         this.width = width;
@@ -31,22 +41,38 @@ public class BattleSalvoBoard {
         this.hitBoard = this.fillBoard(hitBoard);
     }
 
+    /**
+     * Getter for the board
+     *
+     * @return  the current state of the board
+     */
     public State[][] getBoard() {
         return this.board;
     }
 
+    /**
+     * Getter for the hit board, a copy of the board without ships shown
+     *
+     * @return  the current hit board
+     */
     public State[][] getHitBoard() {
         return this.hitBoard;
     }
 
+    /**
+     * Getter for the list of ships on the board
+     *
+     * @return  list of ships
+     */
     public ShipList getShips() {
         return this.ships;
     }
 
-    public int getHeight() { return height; }
-
-    public int getWidth() { return width; }
-
+    /**
+     * Takes a single shot at the board and updates the board
+     *
+     * @param coordinate    coordinate of the location to be shot
+     */
     public void takeShot(Coordinate coordinate) {
         int x = coordinate.x();
         int y = coordinate.y();
@@ -63,8 +89,12 @@ public class BattleSalvoBoard {
         }
     }
 
-
-
+    /**
+     * Constructor method to create the initial board based on the constructor parameters
+     * Places ships and initializes the size
+     *
+     * @return  a 2d array representing the board
+     */
     private State[][] createBoard() {
         Random random = new Random();
         State[][] board = new State[this.width][this.height];
@@ -89,6 +119,17 @@ public class BattleSalvoBoard {
         return fillBoard(board);
     }
 
+    /**
+     * Places a ship on the board based on a random square
+     *
+     * @param board                     board to be placed on
+     * @param ship                      ship to be placed
+     * @param size                      size of ship
+     * @param x                         x coordinate
+     * @param y                         y coordinate
+     * @param vertical                  whether the ship should be placed vertically or horizontally
+     * @throws GenerationException      thrown if no orientation is valid
+     */
     private void placeShip(State[][] board, Ship ship, int size, int x, int y, boolean vertical)
             throws GenerationException {
 
@@ -130,6 +171,12 @@ public class BattleSalvoBoard {
         }
     }
 
+    /**
+     * Fills the given board with water where there is not a ship
+     *
+     * @param board     board with ship placements
+     * @return          board of water and ship placements
+     */
     private State[][] fillBoard(State[][] board) {
         for (int i = 0; i < this.height; i++) {
             for (int j = 0; j < this.width; j++) {
@@ -141,6 +188,12 @@ public class BattleSalvoBoard {
         return board;
     }
 
+    /**
+     * Creates the list of ships based on the amounts given
+     *
+     * @param amounts   amount of each type of ship
+     * @return          the ships as a ship list object
+     */
     private ShipList createShipList(int[] amounts) {
         ShipType[] representatives = new ShipType[] {ShipType.CARRIER, ShipType.BATTLESHIP,
                                                     ShipType.DESTROYER, ShipType.SUBMARINE};

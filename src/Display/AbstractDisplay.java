@@ -1,5 +1,13 @@
 package Display;
 
-public abstract class AbstractDisplay {
-
+/**
+ * Abstract class for Display classes
+ */
+public abstract class AbstractDisplay implements Display {
+    /**
+     * Prints a line to the console
+     */
+    public void printLine() {
+        System.out.println("---------------------------------------------");
+    }
 }

@@ -2,7 +2,14 @@ package Display;
 
 import java.util.NoSuchElementException;
 
-public class WelcomeDisplay implements Display {
+/**
+ * Display for welcoming the user and obtaining the board dimensions;
+ */
+public class WelcomeDisplay extends AbstractDisplay {
+
+    /**
+     * Prints the welcome message
+     */
     @Override
     public void display() {
         System.out.println("BattleSalvo");
@@ -10,19 +17,26 @@ public class WelcomeDisplay implements Display {
         this.printLine();
     }
 
+    /**
+     * Handles generic error
+     */
     public void handleError() { System.err.println("Oh no."); }
 
-    public void handleError(NoSuchElementException e) {
+    /**
+     * Handles when given input is empty
+     *
+     * @param ignored   used to determine message output
+     */
+    public void handleError(NoSuchElementException ignored) {
         System.err.println("Please enter a width and a height.");
     }
 
-    public void handleError(IllegalArgumentException e) {
+    /**
+     * Handles if dimensions are invalid
+     *
+     * @param ignored   used to determine message output
+     */
+    public void handleError(IllegalArgumentException ignored) {
         System.err.println("Unable to set dimensions, please enter a valid with and height");
     }
-
-    public void printLine() { System.out.println("---------------------------------------------"); }
-
-
-
-
 }
